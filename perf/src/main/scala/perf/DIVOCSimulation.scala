@@ -9,8 +9,8 @@ import scala.util.Random
 
 class DIVOCSimulation extends Simulation {
   private val env: String = System.getenv.getOrDefault("targetEnv", "dev")
-  var baseUrl = System.getenv.getOrDefault("baseUrl", "http://perf-divoc.xiv.in")
-  val token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJnUkVqVXA1blE3OG9RcEJjcjZzTFpTQlNyblV5U2dNMjBUaElteVE3dzlrIn0.eyJleHAiOjE2MjczMzIxODgsImlhdCI6MTYxMDA1MjIwMCwiYXV0aF90aW1lIjoxNjEwMDUyMTg4LCJqdGkiOiJiZTcwZTVlOS05MGFhLTQ2NGItOGFlZC1lMTM5YTViOTA3NDMiLCJpc3MiOiJodHRwOi8vZGl2b2MueGl2LmluL2F1dGgvcmVhbG1zL2Rpdm9jIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50IiwiZmFjaWxpdHktYWRtaW4tcG9ydGFsIl0sInN1YiI6IjdiZDU4NTUxLTlhMmItNDllNC1iYWUzLWUwZjdlNmJmNWUyYyIsInR5cCI6IkJlYXJlciIsImF6cCI6ImZhY2lsaXR5LWFwaSIsIm5vbmNlIjoiNTFiOTIwY2QtMjg1Zi00MzU3LWE3ODUtZDE3NzBiYmVlYWRmIiwic2Vzc2lvbl9zdGF0ZSI6IjZlYjFkYTliLTE3NzYtNDYxOS04ZGMxLWJiMzA3YTVmMzI0MCIsImFjciI6IjAiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cHM6Ly9kaXZvYy54aXYuaW4iLCJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCIqIiwiaHR0cHM6Ly9kaXZvYy1hcHAueGl2LmluIiwiaHR0cDovL2xvY2FsaG9zdDozMDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJ2aWV3LXVzZXJzIiwicXVlcnktZ3JvdXBzIiwicXVlcnktdXNlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfSwiZmFjaWxpdHktYWRtaW4tcG9ydGFsIjp7InJvbGVzIjpbImZhY2lsaXR5LXN0YWZmIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiMTExMTExMTE1MiIsImZhY2lsaXR5X2NvZGUiOiJNT0IyMzQxIn0.aDi3JS6tPMHs5yjZQntQucRs5eery7xRJJpJ9yymuQVQrC64gHHGCZ5sEdUxhgzzkUU0v8_jJzzsjSBNl7P1hqMm6V1xSrIhjNYHHOX3asueyKkTuqer2elo2iqMIiZoDRCrPQxOyI3ZDWTRqdGWUTt7Pc4CKfHdiCzez0A14T7c7WuwQiGzumUq34k640o4NJcZ5kMPRIfwAr3s53XfbnRxR7cT6GwvA2-a5Ak_dHCyjaQT5aUOsgCMdqPHHCfO-3Tv1U3cho6fdI7Dxdn3ZwlnC3jM5gbMhqqos0zcRrIT9JvEZfKxMXxGVqYnbrr9zsWTzjFb-UMEwfpnAenqDQ"
+  var baseUrl = System.getenv.getOrDefault("baseUrl", "http://localhost:81")
+  val token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJIbldDQnE0MTF6YWpKWjg2RUN6WGptd0ptTDljQU5NaFVFZkdTSEdVcnpzIn0.eyJleHAiOjE2MzIxMzkxNzEsImlhdCI6MTYxNDg1OTE3MiwiYXV0aF90aW1lIjoxNjE0ODU5MTcxLCJqdGkiOiJlOTg3NmVkNC05YjE0LTRiZTQtODYwYy01NzgxOTkyYWFlOWUiLCJpc3MiOiJodHRwOi8vZGl2b2MueGl2LmluL2F1dGgvcmVhbG1zL2Rpdm9jIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50IiwiZmFjaWxpdHktYWRtaW4tcG9ydGFsIl0sInN1YiI6IjZhYjY0NDQ1LTBmN2YtNGEwYy04ZWMwLTRjMDUzMDg3Y2VmMyIsInR5cCI6IkJlYXJlciIsImF6cCI6ImZhY2lsaXR5LWFwaSIsIm5vbmNlIjoiZWVlODJlYzctNjRiNC00NTk5LTg4MmEtMGRjODc5NWQ1MGQ1Iiwic2Vzc2lvbl9zdGF0ZSI6Ijc4NjUzNjdjLTdjM2UtNDQxMC1iOWJlLWQxNDEzMThiNmY2MyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cHM6Ly9kaXZvYy54aXYuaW4iLCJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCIqIiwiaHR0cHM6Ly9kaXZvYy1hcHAueGl2LmluIiwiaHR0cDovL2xvY2FsaG9zdDozMDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJ2aWV3LXVzZXJzIiwicXVlcnktZ3JvdXBzIiwicXVlcnktdXNlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfSwiZmFjaWxpdHktYWRtaW4tcG9ydGFsIjp7InJvbGVzIjpbImZhY2lsaXR5LXN0YWZmIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoiMTExMTExMTEyNSIsImZhY2lsaXR5X2NvZGUiOiJNQUExMyJ9.cRdvv-4xYr-fSs5xr1sOuRFN6O091WgmnSNwxjBSxbdM5scGaOwLlcrTsLXi1abKVztwQCOlBPzSz0kcY8baEn1Jo_Q4igojfxaLkNJ3fITbxX2cI_3K0ABSjGybPy_qbbxZuciJmQpFV-nMbAtyiX2aAJw1uJpOijB3VWTM5BIDLLMz934PUn8nOYYG_IGImjc8AiJbRdbLL2ccrTRkS5LfbHKBym2csUioswYwxyyc12SGe1Xi_bcLlSLY28vd3824zSHV23VtyyJs0NRTgNIJtJinukHIElyDcgY7HoRXVLJtCKdJqmmBN8DxsmdJFvs_kkUExerwWDU2ZNtikw"
   println(s"Using env ${baseUrl}")
 
   val httpProtocol = http
@@ -34,38 +34,46 @@ class DIVOCSimulation extends Simulation {
     .headers(headers)
     .body(StringBody("""[
                        |  {
-                       |    "preEnrollmentCode": "12346${r}",
-                       |    "recipient": {
-                       |      "name": "Sneha K ${r}",
-                       |      "dob": "1957-01-30",
-                       |      "age":"63",
-                       |      "gender": "Female",
-                       |      "nationality": "Indian",
-                       |      "identity": "did:in.gov.uidai.aadhaar:111122223344",
-                       |      "contact": ["tel:${r}"]
-                       |    },
-                       |    "vaccination": {
-                       |      "name": "COVAXIN",
-                       |      "batch": "MB3428BX",
-                       |      "manufacturer": "Bharat Biotech",
-                       |      "date": "2020-12-02T19:21:19.646Z",
-                       |      "effectiveStart": "2020-12-15",
-                       |      "effectiveUntil": "2021-01-15"
-                       |    },
-                       |    "vaccinator": {
-                       |      "name": "Sooraj Singh"
-                       |    },
-                       |    "facility": {
-                       |      "name": "ABC Medical Center",
-                       |      "address": {
-                       |          "addressLine1" : "123, Koramangala",
-                       |          "addressLine2" :"",
-                       |          "district": "Bengaluru South",
-                       |          "state":"Karnataka",
-                       |          "pin" :560034
-                       |      }
+                       |        "preEnrollmentCode": "118479${r}",
+                       |        "recipient": {
+                       |            "contact": [
+                       |                "tel:${r}"
+                       |            ],
+                       |            "dob": "1995-03-01",
+                       |            "gender": "Male",
+                       |            "identity": "did:in.gov.uidai.aadhaar:234234234342",
+                       |            "name": "Suresh ${r}",
+                       |            "nationality": "Suresh P",
+                       |            "address": {
+                       |                "addressLine1": "asd",
+                       |                "district": "asd",
+                       |                "state": "asd",
+                       |                "pincode": "asd"
+                       |            }
+                       |        },
+                       |        "vaccination": {
+                       |            "batch": "12344312",
+                       |            "date": "2020-12-02T09:44:03.802Z",
+                       |            "effectiveStart": "2020-12-02",
+                       |            "effectiveUntil": "2020-12-02",
+                       |            "manufacturer": "string",
+                       |            "name": "COVID-19",
+                       |            "dose": 1,
+                       |            "totalDoses": 2
+                       |        },
+                       |        "vaccinator": {
+                       |            "name": "Nayan A"
+                       |        },
+                       |        "facility": {
+                       |            "name": "Awesome Hospital",
+                       |            "address": {
+                       |                "addressLine1": "asd",
+                       |                "district": "asd",
+                       |                "state": "asd",
+                       |                "pincode": "asd"
+                       |            }
+                       |        }
                        |    }
-                       |  }
                        |]""".stripMargin))
     .check(status.in(200))
 
@@ -87,7 +95,7 @@ class DIVOCSimulation extends Simulation {
 
   setUp(scn.inject(
     atOnceUsers(1),
-    rampUsers(300).during((300/5).seconds)
+    rampUsers(50).during((300/5).seconds)
   )).protocols(httpProtocol).assertions(
     global.responseTime.max.lt(800),
     global.successfulRequests.percent.gt(98)

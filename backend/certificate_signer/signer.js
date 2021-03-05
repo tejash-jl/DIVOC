@@ -174,8 +174,7 @@ async function signAndSave(certificate, retryCount = 0) {
     mobile: mobile,
     preEnrollmentCode: preEnrollmentCode,
     certificateId: certificateId,
-    certificate: JSON.stringify(signedCertificate),
-    dose: currentDose
+    certificate: JSON.stringify(signedCertificate)
   };
   let resp = await registry.saveCertificate(signedCertificateForDB);
   if (R.pathOr("", ["data", "params", "status"], resp) === UNSUCCESSFUL && R.pathOr("", ["data", "params", "errmsg"], resp).includes(DUPLICATE_MSG)) {

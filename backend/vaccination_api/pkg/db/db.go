@@ -91,6 +91,10 @@ func Init() {
 	db.AutoMigrate(&CertifyUploadErrors{})
 }
 
+func GetDB() *gorm.DB {
+	return db
+}
+
 // CreateCertifyUpload - Create new certify upload entry in DB
 func CreateCertifyUpload(data *CertifyUploads) error {
 	if result := db.Create(&data); result.Error != nil {

@@ -61,7 +61,7 @@ var Config = struct {
 		EnableCertificateAck     bool   `default:"false" env:"ENABLE_CERTIFICATE_ACK"`
 	}
 	Database struct {
-		Host     string `default:"localhost" yaml:"host" env:"DB_HOST"`
+		Host     string `default:"0.0.0.0" yaml:"host" env:"DB_HOST"`
 		Password string `default:"postgres" yaml:"password" env:"DB_PASSWORD"`
 		User     string `default:"postgres" yaml:"user" env:"DB_USER"`
 		Port     string `default:"5432" yaml:"port" env:"DB_PORT"`
