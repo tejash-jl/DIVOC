@@ -13,15 +13,24 @@ import (
 	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
-var enrollments map[string]map[string]map[int]string
+
+var enrollmentsCreated = make(map[string]map[int]string)
+var enrollmentsRowId = make(map[string]map[int]string)
+var enrollmentDuplicates = make(map[string]map[int]int)
 
 func main() {
 	config.Initialize()
 	db.Init()
 	clickhouseClient := initClickhouse()
+	duplicatesFile, _ := os.OpenFile("./cmd/migrations/duplicates.csv", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	for _, filePath := range []string{"./cmd/migrations/sample.csv"} {
+		processedFile, err := os.OpenFile(filePath+"processed", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			panic(err)
+		}
 		file, _ := os.Open(filePath)
 		data := pkg.NewScanner(file)
 		for data.Scan() {
@@ -32,10 +41,35 @@ func main() {
 			preEnrollmentCode := data.Text("preEnrollmentCode")
 			osCreatedAt := data.Text("osCreatedAt")
 			certificateId := data.Text("certificateId")
+			recordedDose := data.Text("dose")
 			var cert models.Certificate
 			if err := json.Unmarshal([]byte(certificate), &cert); err == nil {
 				dose := cert.Evidence[0].Dose
-				if _, alreadyProcessed := enrollments[preEnrollmentCode][osCreatedAt][dose]; !alreadyProcessed {
+				if recordedDose != strconv.Itoa(dose) {
+					if _, alreadyProcessed := enrollmentsCreated[preEnrollmentCode][dose]; alreadyProcessed {
+						currentMatched := []string{rowID, preEnrollmentCode, strconv.Itoa(dose), osCreatedAt}
+						if enrollmentDuplicates[preEnrollmentCode][dose] == 1 {
+							firstMatched := []string{enrollmentsRowId[preEnrollmentCode][dose], preEnrollmentCode, strconv.Itoa(dose), enrollmentsCreated[preEnrollmentCode][dose]}
+							if _, err = duplicatesFile.WriteString(strings.Join(firstMatched, ",") + "\n"); err != nil {
+								log.Error(err)
+							}
+							if _, err = duplicatesFile.WriteString(strings.Join(currentMatched, ",") + "\n"); err != nil {
+								log.Error(err)
+							}
+						} else {
+							if _, err = duplicatesFile.WriteString(strings.Join(currentMatched, ",") + "\n"); err != nil {
+								log.Error(err)
+							}
+						}
+						enrollmentDuplicates[preEnrollmentCode][dose] += 1
+					} else {
+						enrollmentsCreated[preEnrollmentCode] = map[int]string{}
+						enrollmentsRowId[preEnrollmentCode] = map[int]string{}
+						enrollmentDuplicates[preEnrollmentCode] = map[int]int{}
+						enrollmentsCreated[preEnrollmentCode][dose] = osCreatedAt
+						enrollmentsRowId[preEnrollmentCode][dose] = rowID
+						enrollmentDuplicates[preEnrollmentCode][dose] = 1
+					}
 					updateDose(rowID, dose)
 					certifiedMessage := models.CertifiedMessage{
 						Name:              name,
@@ -48,16 +82,21 @@ func main() {
 					}
 					data, err := json.Marshal(certifiedMessage)
 					if err != nil {
-						return
+						log.Errorf("certification marshal error %+v", err)
 					}
 					_ = saveCertifiedEventV1(clickhouseClient, string(data))
 				}
 			} else {
 				log.Errorf("Error in getting certificate %+v", err)
 			}
-
+			if _, err = processedFile.WriteString(data.Row[0] + "\n"); err != nil {
+				log.Error(err)
+			}
 		}
+		_ = processedFile.Close()
+		_ = file.Close()
 	}
+	_ = duplicatesFile.Close()
 }
 
 func updateDose(rowId string, dose int) {
